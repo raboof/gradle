@@ -47,6 +47,10 @@ The following are the newly deprecated items in this Gradle release. If you have
  - Removed `DirectoryBuildCache.targetSizeInMB`.
  - Removed the methods `dependsOnTaskDidWork` and `deleteAllActions` from `Task`.
  - Removed the methods `execute`, `getExecuter`, `setExecuter`, `getValidators` and `addValidator` from `TaskInternal`.
+ - Removed the methods `stopExecutionIfEmpty` and `add` from `FileCollection`.
+ - Removed the ability to cast (Groovy `as`) `FileCollection` to `File[]` and `File`.
+ - Removed the class `SimpleFileCollection`.
+ - Removed the method `getBuildDependencies` from `AbstractFileCollection`. 
 
 ## External contributions
 
