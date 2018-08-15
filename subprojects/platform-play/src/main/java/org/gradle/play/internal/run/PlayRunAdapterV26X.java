@@ -24,9 +24,23 @@ import java.net.InetSocketAddress;
 
 public class PlayRunAdapterV26X extends PlayRunAdapterV24X {
     @Override
-    public InetSocketAddress runDevHttpServer(ClassLoader classLoader, ClassLoader docsClassLoader, Object buildLink, Object buildDocHandler, int httpPort) throws ClassNotFoundException {
-        ScalaMethod runMethod = ScalaReflectionUtil.scalaMethod(classLoader, "play.core.server.DevServerStart", "mainDevHttpMode", getBuildLinkClass(classLoader), int.class, String.class);
-        Object reloadableServer = runMethod.invoke(buildLink, httpPort, "0.0.0.0");
+    public InetSocketAddress runDevHttpServer(ClassLoader classLoader, ClassLoader docsClassLoader, Object buildLink, Object buildDocHandler, int httpPort, int httpsPort) throws ClassNotFoundException {
+        Object reloadableServer = getServer(classLoader, buildLink, httpPort, httpsPort);
         return JavaReflectionUtil.method(reloadableServer, InetSocketAddress.class, "mainAddress").invoke(reloadableServer);
+    }
+
+    private Object getServer(ClassLoader classLoader, Object buildLink, int httpPort, int httpsPort) throws ClassNotFoundException {
+        if (httpPort != -1) {
+            if (httpsPort != -1) {
+                throw new IllegalStateException("Play does not currently support starting the dev server with both HTTP and HTTPS");
+            }
+            ScalaMethod runMethod = ScalaReflectionUtil.scalaMethod(classLoader, "play.core.server.DevServerStart", "mainDevHttpMode", getBuildLinkClass(classLoader), int.class, String.class);
+            return runMethod.invoke(buildLink, httpPort, "0.0.0.0");
+        } else  if (httpsPort != -1) {
+            ScalaMethod runMethod = ScalaReflectionUtil.scalaMethod(classLoader, "play.core.server.DevServerStart", "mainDevOnlyHttpsMode", getBuildLinkClass(classLoader), int.class, String.class);
+            return runMethod.invoke(buildLink, httpsPort, "0.0.0.0");
+        } else {
+            throw new IllegalStateException("Either the HTTP or the HTTPS port should be specified");
+        }
     }
 }

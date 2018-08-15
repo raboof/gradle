@@ -147,7 +147,10 @@ public abstract class DefaultVersionedPlayRunAdapter implements VersionedPlayRun
     }
 
     @Override
-    public InetSocketAddress runDevHttpServer(ClassLoader classLoader, ClassLoader docsClassLoader, Object buildLink, Object buildDocHandler, int httpPort) throws ClassNotFoundException {
+    public InetSocketAddress runDevHttpServer(ClassLoader classLoader, ClassLoader docsClassLoader, Object buildLink, Object buildDocHandler, int httpPort, int httpsPort) throws ClassNotFoundException {
+        if (httpsPort != -1) {
+            throw new UnsupportedOperationException("HTTPS is not supported by Gradle with this version of Play");
+        }
         ScalaMethod runMethod = ScalaReflectionUtil.scalaMethod(classLoader, "play.core.server.NettyServer", "mainDevHttpMode", getBuildLinkClass(classLoader), getBuildDocHandlerClass(docsClassLoader), int.class);
         Object reloadableServer = runMethod.invoke(buildLink, buildDocHandler, httpPort);
         return JavaReflectionUtil.method(reloadableServer, InetSocketAddress.class, "mainAddress").invoke(reloadableServer);

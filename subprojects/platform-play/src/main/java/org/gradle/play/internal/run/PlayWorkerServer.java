@@ -90,7 +90,7 @@ public class PlayWorkerServer implements Action<WorkerProcessContext>, PlayRunWo
         try {
             Object buildDocHandler = runAdapter.getBuildDocHandler(classLoader, runSpec.getClasspath());
             Object buildLink = runAdapter.getBuildLink(classLoader, this, runSpec.getProjectPath(), runSpec.getApplicationJar(), runSpec.getChangingClasspath(), runSpec.getAssetsJar(), runSpec.getAssetsDirs());
-            return runAdapter.runDevHttpServer(classLoader, classLoader, buildLink, buildDocHandler, runSpec.getHttpPort());
+            return runAdapter.runDevHttpServer(classLoader, classLoader, buildLink, buildDocHandler, runSpec.getHttpPort(), runSpec.getHttpsPort());
         } catch (Exception e) {
             throw UncheckedException.throwAsUncheckedException(e);
         } finally {

@@ -38,4 +38,6 @@ public interface PlayRunSpec {
 
     int getHttpPort();
 
+    int getHttpsPort();
+
 }

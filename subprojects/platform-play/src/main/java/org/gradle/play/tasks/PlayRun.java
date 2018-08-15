@@ -50,6 +50,8 @@ public class PlayRun extends ConventionTask {
 
     private int httpPort;
 
+    private int httpsPort = -1;
+
     private final DirectoryProperty workingDir = getProject().getLayout().directoryProperty();
 
     @InputFile
@@ -89,13 +91,16 @@ public class PlayRun extends ConventionTask {
         PlayApplicationDeploymentHandle deploymentHandle = deploymentRegistry.get(deploymentId, PlayApplicationDeploymentHandle.class);
 
         if (deploymentHandle == null) {
-            PlayRunSpec spec = new DefaultPlayRunSpec(runtimeClasspath, changingClasspath, applicationJar, assetsJar, assetsDirs, workingDir.get().getAsFile(), getForkOptions(), getHttpPort());
+            PlayRunSpec spec = new DefaultPlayRunSpec(runtimeClasspath, changingClasspath, applicationJar, assetsJar, assetsDirs, workingDir.get().getAsFile(), getForkOptions(), getHttpPort(), getHttpsPort());
             PlayApplicationRunner playApplicationRunner = playToolProvider.get(PlayApplicationRunner.class);
             deploymentHandle = deploymentRegistry.start(deploymentId, DeploymentRegistry.ChangeBehavior.BLOCK, PlayApplicationDeploymentHandle.class, spec, playApplicationRunner);
 
             InetSocketAddress playAppAddress = deploymentHandle.getPlayAppAddress();
-            String playUrl = "http://localhost:" + playAppAddress.getPort() + "/";
-            LOGGER.warn("Running Play App ({}) at {}", getPath(), playUrl);
+            if (httpPort == -1) {
+                LOGGER.warn("Running Play App ({}) at {}", getPath(), "https://localhost:" + playAppAddress.getPort() + "/");
+            } else {
+                LOGGER.warn("Running Play App ({}) at {}", getPath(), "http://localhost:" + playAppAddress.getPort() + "/");
+            }
         }
     }
 
@@ -113,6 +118,22 @@ public class PlayRun extends ConventionTask {
 
     public void setHttpPort(int httpPort) {
         this.httpPort = httpPort;
+    }
+
+    /**
+     * The HTTPS port listened to by the Play application.
+     *
+     * This port should be available.  The Play application will fail to start if the port is already in use.
+     *
+     * @return HTTPS port
+     */
+    @Internal
+    public int getHttpsPort() {
+        return httpsPort;
+    }
+
+    public void setHttpsPort(int httpPort) {
+        this.httpsPort = httpsPort;
     }
 
     /**

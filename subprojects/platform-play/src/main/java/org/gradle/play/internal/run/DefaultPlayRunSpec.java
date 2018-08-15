@@ -32,8 +32,9 @@ public class DefaultPlayRunSpec implements PlayRunSpec, Serializable {
     private final File projectPath;
     private BaseForkOptions forkOptions;
     private int httpPort;
+    private int httpsPort;
 
-    public DefaultPlayRunSpec(Iterable<File> classpath, Iterable<File> changingClasspath, File applicationJar, File assetsJar, Iterable<File> assetsDirs, File projectPath, BaseForkOptions forkOptions, int httpPort) {
+    public DefaultPlayRunSpec(Iterable<File> classpath, Iterable<File> changingClasspath, File applicationJar, File assetsJar, Iterable<File> assetsDirs, File projectPath, BaseForkOptions forkOptions, int httpPort, int httpsPort) {
         this.classpath = Sets.newLinkedHashSet(classpath);
         this.changingClasspath = changingClasspath != null ? Sets.newLinkedHashSet(changingClasspath) : Collections.<File>emptySet();
         this.applicationJar = applicationJar;
@@ -42,6 +43,7 @@ public class DefaultPlayRunSpec implements PlayRunSpec, Serializable {
         this.projectPath = projectPath;
         this.forkOptions = forkOptions;
         this.httpPort = httpPort;
+        this.httpsPort = httpsPort;
     }
 
     @Override
@@ -67,6 +69,11 @@ public class DefaultPlayRunSpec implements PlayRunSpec, Serializable {
     @Override
     public int getHttpPort() {
         return httpPort;
+    }
+
+    @Override
+    public int getHttpsPort() {
+        return httpsPort;
     }
 
     @Override
